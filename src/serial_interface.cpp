@@ -2,8 +2,6 @@
 #include "serial_interface.h"
 
 namespace console{
-    //int printcounter = 0;
-
     const byte numChars = 32;
     char receivedCommand[numChars] = {0};
     bool hasValidCommand = false;
