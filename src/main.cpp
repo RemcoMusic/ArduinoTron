@@ -1,20 +1,21 @@
 #include <Arduino.h>
 #include "serial_interface.h"
+#include "FAT.h"
 
 #define BUFSIZE 32
 
 typedef struct {
   char name [BUFSIZE];
-  void * func;
+  void *func;
 }commandType;
 
 static commandType command[] = {
-    {"store",     &console::printToConsole},
-    {"retrieve",  &console::printToConsole},
-    {"erase",     &console::printToConsole},
-    {"files",     &console::printToConsole},
+    {"store",     &fat::storeFile},
+    {"retrieve",  &fat::readFile},
+    {"erase",     &fat::eraseFile},
+    {"files",     &fat::retrieveFiles},
     {"freespace", &console::printToConsole},
-    {"run",       &console::printToConsole},
+    {"run",       &fat::noFatTable},
     {"list",      &console::printToConsole},
     {"suspend",   &console::printToConsole},
     {"resume",    &console::printToConsole},
@@ -31,19 +32,20 @@ void handleInputCommand(char* line){
   char* param2 = 0;
   char* param3 = 0;
   bool noCommand = true;
+  int paramCounter = 0;
 
   char *token = strtok(line, " ");
   if(token){
     _command = token;
-  } 
+  }
   token = strtok(NULL, " ");
   if(token){
     param1 = token;
-  } 
+  }
    token = strtok(NULL, " ");
   if(token){
     param2 = token;
-  } 
+  }
    token = strtok(NULL, " ");
   if(token){
     param3 = token;
@@ -56,14 +58,28 @@ void handleInputCommand(char* line){
       console::printToConsole(command[i].name);
       noCommand = false;
       if(param1 != 0 ){
+        paramCounter++;
         console::printToConsole("With parameters: ");
         console::printToConsole(param1);
+        if(param2 != 0) {
+        paramCounter++;
+        }
+        if(param3 != 0) {
+        paramCounter++;
+        }
       }
-      if(param2 != 0){
-        console::printToConsole(param2);
-      }
-      if(param3 != 0){
-        console::printToConsole(param3);
+      if(paramCounter == 1){
+        void (*func) (char* foo) = command[i].func;
+        func(param1);
+      } else if(paramCounter == 2){
+        void (*func) (char* parameter, char* parameter2) = command[i].func;
+        func(param1, param2);
+      } else if(paramCounter == 3){
+        void (*func) (char* parameter, void* parameter2, char* parameter3) = command[i].func;
+        func(param1, param2, param3);
+      } else if(paramCounter == 0){
+        void (*func) () = command[i].func;
+        func();
       }
     }
   }
@@ -73,7 +89,6 @@ void handleInputCommand(char* line){
         console::printToConsole(command[i].name);
       }
   }
-
 }
 
 void loop(){
