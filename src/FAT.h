@@ -10,6 +10,7 @@ struct file
 };
 
 namespace fat{
+    void initializeFATTable();
     void writeFATEntry(char* name, int eeAddress, int length);
     file readFATEntry(int eeAddress);
     void storeFile(char* fileName, char* fileLenght, char* data);
@@ -17,4 +18,5 @@ namespace fat{
     void eraseFile(char* fileName);
     void retrieveFiles();
     void noFatTable();
+    void currentSpace();
 }

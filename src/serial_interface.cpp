@@ -2,7 +2,7 @@
 #include "serial_interface.h"
 
 namespace console{
-    const byte numChars = 32;
+    const byte numChars = 86;
     char receivedCommand[numChars] = {0};
     bool hasValidCommand = false;
 

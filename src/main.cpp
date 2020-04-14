@@ -1,4 +1,5 @@
 #include <Arduino.h>
+#include <EEPROM.h>
 #include "serial_interface.h"
 #include "FAT.h"
 
@@ -14,8 +15,8 @@ static commandType command[] = {
     {"retrieve",  &fat::readFile},
     {"erase",     &fat::eraseFile},
     {"files",     &fat::retrieveFiles},
-    {"freespace", &console::printToConsole},
-    {"run",       &fat::noFatTable},
+    {"freespace", &fat::currentSpace},
+    {"run",       &console::printToConsole},
     {"list",      &console::printToConsole},
     {"suspend",   &console::printToConsole},
     {"resume",    &console::printToConsole},
@@ -24,6 +25,7 @@ static commandType command[] = {
 
 void setup(){
   console::initialize();
+  fat::initializeFATTable();
 }
 
 void handleInputCommand(char* line){
