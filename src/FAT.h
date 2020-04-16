@@ -15,6 +15,7 @@ namespace fat{
     file readFATEntry(int eeAddress);
     void storeFile(char* fileName, char* fileLenght, char* data);
     void readFile(char* fileName);
+    String getFile(char* fileName);
     void eraseFile(char* fileName);
     void retrieveFiles();
     void noFatTable();

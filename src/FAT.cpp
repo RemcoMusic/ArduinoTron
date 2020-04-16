@@ -38,10 +38,6 @@ namespace fat{
     file readFATEntry(int eeAddress){
         file storedFile;
         EEPROM.get(eeAddress, storedFile);
-        // Serial.println("Retreived file: ");
-        // Serial.println(storedFile.fileName);
-        // Serial.println(storedFile.startPosFile);
-        // Serial.println(storedFile.fileLenght);
         return storedFile;
     }
 
@@ -74,18 +70,24 @@ namespace fat{
     }
 
     void readFile(char* fileName){
+        getFile(fileName);
+    }
+
+    String getFile(char* fileName){
         for(int i = 0; i < 10; i++)
         {
             file tempFile;
             EEPROM.get(fileList[i], tempFile);
             int compareInput = strcmp(tempFile.fileName, fileName);
+           // Serial.print("compare files: "); Serial.print(fileName);Serial.print(" and "); Serial.println(tempFile.fileName); 
             if(compareInput == 0){
                 char* dataFile;
                 EEPROM.get(tempFile.startPosFile, dataFile);
                 console::printToConsole(dataFile);
-                break;
+                return dataFile;
             } else if((compareInput > 0 || compareInput < 0) && i == 9){
                 console::printToConsole("There no such file stored in the EEPROM");
+                return "Err..Sorry..fu";
             }
         }
     }
